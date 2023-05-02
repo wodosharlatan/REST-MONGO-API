@@ -1,4 +1,4 @@
-# Shopping API
+# REST-API
 This is a simple REST API built using Node.js and MongoDB to manage shopping items and users.
 
 ## Requirements
