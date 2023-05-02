@@ -1,12 +1,44 @@
 const express = require("express");
 const router = express.Router();
 const Entry = require("../models/entry_model");
+const fs = require("fs");
+const path = require("path");
 
 // localhost:3000/entries => get all entries
 router.get("/", async (req, res) => {
 	try {
 		const entries = await Entry.find();
-		res.json(entries);
+
+		fs.writeFileSync(
+			"./JSON_data/entries.json",
+			JSON.stringify(entries),
+			(err) => {
+				if (err) {
+					console.log(err);
+				} else {
+					console.log("File written successfully\n");
+				}
+			}
+		);
+
+		const filePath = path.join(__dirname, "..", "JSON_data", "entries.json");
+		const fileContent = fs.readFileSync(filePath, "utf8");
+		const entriesJson = JSON.parse(fileContent);
+
+		const validatedJson = entriesJson.map((entry) => ({
+			_id: entry._id,
+			title: entry.title,
+			description: entry.description,
+			date: entry.date,
+			__v: entry.__v,
+		}));
+
+		const jsonString = JSON.stringify(validatedJson, null, 2);
+		console.log(jsonString);
+		
+		res.setHeader("Content-Type", "application/json");
+		res.send(jsonString);
+
 	} catch (error) {
 		res.json({ message: error });
 	}
