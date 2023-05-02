@@ -18,12 +18,13 @@ npm install
 ```env
 DB_CONNECTION=<your MongoDB connection string>
 PORT=<port number for the server>
+API_URL_USERS=<URL to the API for example railway: https://<your API name>.railway.app/users >
 ```
 
 4. Start the server development by running the following command:
 
 ```sh
-npm start
+npm run dev
 ```
 ## API Endpoints
 
