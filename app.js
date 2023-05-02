@@ -16,10 +16,10 @@ require('dotenv/config')
 
 
 // Import Routes
-const postRoute = require('./routes/post');
+const usersRoute = require('./routes/users');
 
 // Middleware
-app.use('/post', postRoute);
+app.use('/users', usersRoute);
 app.use(cors());
 app.use(express.static(__dirname + "/public"));
 
