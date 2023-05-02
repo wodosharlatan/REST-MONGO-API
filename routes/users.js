@@ -2,82 +2,58 @@ const express = require("express");
 const router = express.Router();
 const User = require("../models/user_model");
 const axios = require("axios");
-const fs = require("fs");
-const path = require("path");
+const { ValidateToJson } = require("../functions/functions.js");
 
 // Import .env variables
-require('dotenv/config')
-
+require("dotenv/config");
 
 // localhost:3000/users => get all users
 router.get("/", async (req, res) => {
 	try {
 		const users = await User.find();
 
-		fs.writeFileSync(
-			"./JSON_data/all_users.json",
-			JSON.stringify(users),
-			(err) => {
-				if (err) {
-					console.log(err);
-				} else {
-					console.log("File written successfully\n");
-				}
-			}
-		);
+		// Convert the data to JSON using the ValidateToJson function
+		jsonString = ValidateToJson("all_users", users);
 
-		const filePath = path.join(__dirname, "..", "JSON_data", "all_users.json");
-		const fileContent = fs.readFileSync(filePath, "utf8");
-		const entriesJson = JSON.parse(fileContent);
-
-		const jsonString = JSON.stringify(entriesJson, null, 2);
-		
 		res.setHeader("Content-Type", "application/json");
 		res.send(jsonString);
-
 	} catch (error) {
 		console.log(error);
 		res.json({ message: error });
 	}
 });
 
-
 // localhost:3000/users => submit a user
 router.post("/", async (req, res) => {
-
 	// Get the current number of users and add 1 to it => this is the new user id
 	const currentID = await axios.get(process.env.API_URL_USERS);
-	const newID = (currentID.data.length + 1).toString();
 
-	console.log(newID);
+	const ID_List = [];
+
+	// Get all the current user id's
+	for (let i = 0; i < currentID.data.length; i++) {
+		ID_List.push(currentID.data[i].User_ID);
+	}
+
+	// check if the new id is already in the database
+	let newID = 1;
+	while (ID_List.includes(newID.toString())) {
+		newID++;
+	}
+
+	newID = newID.toString();
 
 	const user = new User({
 		Username: req.body.Username,
 		Password: req.body.Password,
-		User_ID:  newID,
+		User_ID: newID,
 	});
 
 	try {
 		const savedUser = await user.save();
 
-		fs.writeFileSync(
-			"./JSON_data/new_user.json",
-			JSON.stringify(savedUser),
-			(err) => {
-				if (err) {
-					console.log(err);
-				} else {
-					console.log("File written successfully\n");
-				}
-			}
-		);
+		jsonString = ValidateToJson("new_user", savedUser);
 
-		const filePath = path.join(__dirname, "..", "JSON_data", "new_user.json");
-		const fileContent = fs.readFileSync(filePath, "utf8");
-		const entriesJson = JSON.parse(fileContent);
-
-		const jsonString = JSON.stringify(entriesJson, null, 2);
-		
 		res.setHeader("Content-Type", "application/json");
 		res.send(jsonString);
 	} catch (err) {
@@ -85,63 +61,27 @@ router.post("/", async (req, res) => {
 	}
 });
 
-
 // localhost:3000/user/:userId => get a specific user
 router.get("/:User_ID", async (req, res) => {
 	try {
 		const validatedUser = await User.findOne({ User_ID: req.params.User_ID });
 
-		fs.writeFileSync(
-			"./JSON_data/specific_user.json",
-			JSON.stringify(validatedUser),
-			(err) => {
-				if (err) {
-					console.log(err);
-				} else {
-					console.log("File written successfully\n");
-				}
-			}
-		);
+		jsonString = ValidateToJson("specific_user", validatedUser);
 
-		const filePath = path.join(__dirname, "..", "JSON_data", "specific_user.json");
-		const fileContent = fs.readFileSync(filePath, "utf8");
-		const entriesJson = JSON.parse(fileContent);
-
-		const jsonString = JSON.stringify(entriesJson, null, 2);
-		
 		res.setHeader("Content-Type", "application/json");
 		res.send(jsonString);
-
-
 	} catch (error) {
 		res.json({ message: error });
 	}
 });
-
 
 // delete a specific user
 router.delete("/:User_ID", async (req, res) => {
 	try {
 		const removedUser = await User.deleteOne({ User_ID: req.params.User_ID });
 
-		fs.writeFileSync(
-			"./JSON_data/removed_user.json",
-			JSON.stringify(removedUser),
-			(err) => {
-				if (err) {
-					console.log(err);
-				} else {
-					console.log("File written successfully\n");
-				}
-			}
-		);
+		jsonString = ValidateToJson("removed_user", removedUser);
 
-		const filePath = path.join(__dirname, "..", "JSON_data", "removed_user.json");
-		const fileContent = fs.readFileSync(filePath, "utf8");
-		const entriesJson = JSON.parse(fileContent);
-
-		const jsonString = JSON.stringify(entriesJson, null, 2);
-		
 		res.setHeader("Content-Type", "application/json");
 		res.send(jsonString);
 	} catch (error) {
@@ -149,7 +89,6 @@ router.delete("/:User_ID", async (req, res) => {
 		res.json({ message: error });
 	}
 });
-
 
 // update a specific user
 router.patch("/:User_ID", async (req, res) => {
@@ -159,24 +98,8 @@ router.patch("/:User_ID", async (req, res) => {
 			{ $set: { Username: req.body.Username, Password: req.body.Password } }
 		);
 
-		fs.writeFileSync(
-			"./JSON_data/updated_user.json",
-			JSON.stringify(updatedUser),
-			(err) => {
-				if (err) {
-					console.log(err);
-				} else {
-					console.log("File written successfully\n");
-				}
-			}
-		);
+		jsonString = ValidateToJson("updated_user", updatedUser);
 
-		const filePath = path.join(__dirname, "..", "JSON_data", "updated_user.json");
-		const fileContent = fs.readFileSync(filePath, "utf8");
-		const entriesJson = JSON.parse(fileContent);
-
-		const jsonString = JSON.stringify(entriesJson, null, 2);
-		
 		res.setHeader("Content-Type", "application/json");
 		res.send(jsonString);
 	} catch (error) {

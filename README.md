@@ -80,7 +80,7 @@ const userSchema = mongoose.Schema({
 		type: String,
 		required: true,
 	},
-	User_ID: { // << This is Auto Incremented
+	User_ID: { // <-- This is Auto Incremented (Routes -> users.js -> router.post => submit a user )
 		type: String,
 		required: true,
 	},
