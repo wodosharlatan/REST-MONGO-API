@@ -3,11 +3,11 @@ const express = require('express');
 const app = express();
 const port = process.env.PORT || 3000;
 const mongoose = require('mongoose');
+require('dotenv/config')
 
-const password = process.env.MONGO_PASSWORD;
 
 // Connect to MongoDB
-mongoose.connect(`mongodb+srv://tombos255:${password}@maincluster.2x1yo3z.mongodb.net/?retryWrites=true&w=majority`)
+mongoose.connect(process.env.DB_CONNECTION, { useNewUrlParser: true})
   .then(() => console.log("Connected To MongoDB"))
   .catch((error) => console.error("Error Connecting To MongoDB", error));
 // Connect to MongoDB
@@ -33,4 +33,3 @@ app.listen(port, () => {
     console.log(`Example app listening on port http://localhost:${port} !`);
     }
 );
-
