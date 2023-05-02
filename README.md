@@ -72,17 +72,17 @@ module.exports = mongoose.model("Entries", entrySchema);
 const mongoose = require("mongoose");
 
 const userSchema = mongoose.Schema({
-	title: {
+	Username: {
 		type: String,
 		required: true,
 	},
-	description: {
+	Password: {
 		type: String,
 		required: true,
 	},
-	date: {
-		type: Date,
-		default: Date.now,
+	User_ID: { // << This is Auto Incremented
+		type: String,
+		required: true,
 	},
 });
 
