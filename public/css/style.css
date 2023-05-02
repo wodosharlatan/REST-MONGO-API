@@ -1,0 +1,30 @@
+body {
+	height: 100vh;
+	margin: 0;
+	font-family: "Poppins", sans-serif;
+}
+
+.number {
+	/* center this div*/
+	margin: auto;
+	/* make it 50% of the screen */
+	width: 50%;
+	/* make it 50% of the screen */
+	height: 50%;
+	/* center the text */
+	text-align: center;
+	/* center the text vertically */
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	/* make the text bigger */
+	font-size: 550px;
+}
+
+.text {
+	/* center the text */
+	text-align: center;
+	/* make the text bigger */
+	font-size: 80px;
+}
+
