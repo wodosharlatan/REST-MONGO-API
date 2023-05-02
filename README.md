@@ -67,7 +67,7 @@ const entrySchema = mongoose.Schema({
 module.exports = mongoose.model("Entries", entrySchema);
 ```
 
-### 2. users
+### 2. Users
 ```js
 const mongoose = require("mongoose");
 
@@ -90,4 +90,4 @@ module.exports = mongoose.model("Users", userSchema);
 ```
 
 # License
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the MIT License - see the <a href="https://github.com/wodosharlatan/REST-API-DB/blob/main/LICENSE">LICENSE</a> file for details.
