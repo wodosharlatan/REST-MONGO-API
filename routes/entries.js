@@ -78,7 +78,7 @@ router.post("/", async (req, res) => {
 		
 		res.setHeader("Content-Type", "application/json");
 		res.send(jsonString);
-		
+
 	} catch (err) {
 		console.log(err);
 		res.json({ message: err });
@@ -89,7 +89,28 @@ router.post("/", async (req, res) => {
 router.get("/:entryId", async (req, res) => {
 	try {
 		const entry = await Entry.findById(req.params.entryId);
-		res.json(entry);
+
+		fs.writeFileSync(
+			"./JSON_data/specific_entry.json",
+			JSON.stringify(entry),
+			(err) => {
+				if (err) {
+					console.log(err);
+				} else {
+					console.log("File written successfully\n");
+				}
+			}
+		);
+
+		const filePath = path.join(__dirname, "..", "JSON_data", "specific_entry.json");
+		const fileContent = fs.readFileSync(filePath, "utf8");
+		const entriesJson = JSON.parse(fileContent);
+
+		const jsonString = JSON.stringify(entriesJson, null, 2);
+		
+		res.setHeader("Content-Type", "application/json");
+		res.send(jsonString);
+
 	} catch (error) {
 		res.json({ message: error });
 	}
@@ -99,7 +120,29 @@ router.get("/:entryId", async (req, res) => {
 router.delete("/:entryId", async (req, res) => {
 	try {
 		const removedEntry = await Entry.deleteOne({ _id: req.params.entryId });
-		res.json(removedEntry);
+		
+		fs.writeFileSync(
+			"./JSON_data/removed_entry.json",
+			JSON.stringify(removedEntry),
+			(err) => {
+				if (err) {
+					console.log(err);
+				} else {
+					console.log("File written successfully\n");
+				}
+			}
+		);
+
+		const filePath = path.join(__dirname, "..", "JSON_data", "removed_entry.json");
+		const fileContent = fs.readFileSync(filePath, "utf8");
+		const entriesJson = JSON.parse(fileContent);
+
+		const jsonString = JSON.stringify(entriesJson, null, 2);
+		
+		res.setHeader("Content-Type", "application/json");
+		res.send(jsonString);
+
+
 	} catch (error) {
 		console.log(error);
 		res.json({ message: error });
@@ -113,7 +156,28 @@ router.patch("/:entryId", async (req, res) => {
 			{ _id: req.params.entryId },
 			{ $set: { title: req.body.title } }
 		);
-		res.json(updatedEntry);
+
+		fs.writeFileSync(
+			"./JSON_data/updated_entry.json",
+			JSON.stringify(updatedEntry),
+			(err) => {
+				if (err) {
+					console.log(err);
+				} else {
+					console.log("File written successfully\n");
+				}
+			}
+		);
+
+		const filePath = path.join(__dirname, "..", "JSON_data", "updated_entry.json");
+		const fileContent = fs.readFileSync(filePath, "utf8");
+		const entriesJson = JSON.parse(fileContent);
+
+		const jsonString = JSON.stringify(entriesJson, null, 2);
+		
+		res.setHeader("Content-Type", "application/json");
+		res.send(jsonString);
+
 	} catch (error) {
 		console.log(error);
 		res.json({ message: error });
