@@ -17,13 +17,17 @@ require('dotenv/config')
 
 // Import Routes
 const usersRoute = require('./routes/users');
+const entriesRoute = require('./routes/entries');
 
 // Middleware
 app.use('/users', usersRoute);
+app.use('/entries', entriesRoute);
+
+// CORS 
 app.use(cors());
+
+// Serve static files
 app.use(express.static(__dirname + "/public"));
-
-
 
 // Routes
 app.get("/*", (req, res) => {
