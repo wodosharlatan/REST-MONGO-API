@@ -18,7 +18,8 @@ npm install
 ```env
 DB_CONNECTION=<your MongoDB connection string>
 PORT=<port number for the server>
-API_URL_USERS=<URL to the API for example railway: https://<your API name>.railway.app/users >
+API_URL_USERS=<URL to the API hosting service providing USERS.JSON >
+API_URL_ENTRIES=<URL to the API hosting service providing ENTRIES.JSON >
 ```
 
 4. Start the server development by running the following command:
@@ -49,23 +50,38 @@ npm run dev
 ### 1. Entries
 ```js
 const mongoose = require("mongoose");
+const { GetCurrentDate } = require("../functions/functions.js");
+
 
 const entrySchema = mongoose.Schema({
-	title: {
+	Entry_ID: { // <-- This is Auto Incremented (Routes -> entries.js -> entry.post => add new entry )
 		type: String,
 		required: true,
 	},
-	description: {
+	ProductName: {
 		type: String,
 		required: true,
 	},
-	date: {
-		type: Date,
-		default: Date.now,
+	Unit: {
+		type: String,
+		required: true,
+	},
+	Count: {
+		type: String,
+		required: true,
+	},
+	AddedBy: {
+		type: String,
+		required: true,
+	},
+	TimeStamp: {
+		type: String,
+		default: GetCurrentDate(), // <-- Always returns Current Date in DD.MM.YYYY format
 	},
 });
 
 module.exports = mongoose.model("Entries", entrySchema);
+
 ```
 
 ### 2. Users

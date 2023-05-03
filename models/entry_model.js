@@ -1,17 +1,31 @@
 const mongoose = require("mongoose");
+const { GetCurrentDate } = require("../functions/functions.js");
+
 
 const entrySchema = mongoose.Schema({
-	title: {
+	Entry_ID: {
 		type: String,
 		required: true,
 	},
-	description: {
+	ProductName: {
 		type: String,
 		required: true,
 	},
-	date: {
-		type: Date,
-		default: Date.now,
+	Unit: {
+		type: String,
+		required: true,
+	},
+	Count: {
+		type: String,
+		required: true,
+	},
+	AddedBy: {
+		type: String,
+		required: true,
+	},
+	TimeStamp: {
+		type: String,
+		default: GetCurrentDate(),
 	},
 });
 

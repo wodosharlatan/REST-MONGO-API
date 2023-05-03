@@ -19,13 +19,13 @@ router.get("/", async (req, res) => {
 		res.send(jsonString);
 	} catch (error) {
 		console.log(error);
-		res.json({ message: error });
+		res.json({ message: error.toString() });
 	}
 });
 
 // localhost:3000/users => submit a user
 router.post("/", async (req, res) => {
-	// Get the current number of users and add 1 to it => this is the new user id
+	// Get the current number of users
 	const currentID = await axios.get(process.env.API_URL_USERS);
 
 	const ID_List = [];
@@ -57,7 +57,7 @@ router.post("/", async (req, res) => {
 		res.setHeader("Content-Type", "application/json");
 		res.send(jsonString);
 	} catch (err) {
-		res.json({ message: err });
+		res.json({ message: err.toString() });
 	}
 });
 
@@ -71,7 +71,7 @@ router.get("/:User_ID", async (req, res) => {
 		res.setHeader("Content-Type", "application/json");
 		res.send(jsonString);
 	} catch (error) {
-		res.json({ message: error });
+		res.json({ message: error.toString() });
 	}
 });
 
@@ -86,7 +86,7 @@ router.delete("/:User_ID", async (req, res) => {
 		res.send(jsonString);
 	} catch (error) {
 		console.log(error);
-		res.json({ message: error });
+		res.json({ message: error.toString() });
 	}
 });
 
@@ -104,7 +104,7 @@ router.patch("/:User_ID", async (req, res) => {
 		res.send(jsonString);
 	} catch (error) {
 		console.log(error);
-		res.json({ message: error });
+		res.json({ message: error.toString() });
 	}
 });
 
