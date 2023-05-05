@@ -7,6 +7,12 @@ const { ValidateToJson } = require("../functions/functions.js");
 // Import .env variables
 require("dotenv/config");
 
+const config = {
+	headers: {
+	  'x-api-key': `${process.env.API_KEY}`
+	}
+  };
+
 // localhost:3000/users => get all users
 router.get("/", async (req, res) => {
 	try {
@@ -26,7 +32,7 @@ router.get("/", async (req, res) => {
 // localhost:3000/users => submit a user
 router.post("/", async (req, res) => {
 	// Get the current number of users
-	const currentID = await axios.get(process.env.API_URL_USERS);
+	const currentID = await axios.get(process.env.API_URL_USERS, config);
 
 	const ID_List = [];
 

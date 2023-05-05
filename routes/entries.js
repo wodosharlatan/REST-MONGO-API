@@ -4,6 +4,15 @@ const Entry = require("../models/entry_model");
 const axios = require("axios");
 const { ValidateToJson } = require("../functions/functions.js");
 
+// Import .env variables
+require("dotenv/config");
+
+const config = {
+  headers: {
+    'x-api-key': `${process.env.API_KEY}`
+  }
+};
+
 // localhost:3000/entries => get all entries
 router.get("/", async (req, res) => {
 	try {
@@ -23,7 +32,7 @@ router.get("/", async (req, res) => {
 // localhost:3000/entries => submit a entry
 router.post("/", async (req, res) => {
 	// Get the current number of entries
-	const currentID = await axios.get(process.env.API_URL_ENTRIES);
+	const currentID = await axios.get(process.env.API_URL_ENTRIES, config);
 
 	const ID_List = [];
 
