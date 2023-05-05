@@ -19,9 +19,21 @@ require('dotenv/config')
 const usersRoute = require('./routes/users');
 const entriesRoute = require('./routes/entries');
 
+
+// verify API KEY
+app.use((req,res,next) => {
+  const providedApiKey = req.headers['x-api-key']
+  if(!providedApiKey || providedApiKey !== process.env.API_KEY){
+    return res.status(401).json({message: "Invalid API key"})
+  }
+});
+
+
 // Middleware
 app.use('/users', usersRoute);
 app.use('/entries', entriesRoute);
+
+
 
 // CORS 
 app.use(cors());

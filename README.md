@@ -20,6 +20,7 @@ DB_CONNECTION=<your MongoDB connection string>
 PORT=<port number for the server>
 API_URL_USERS=<URL to the API hosting service providing USERS.JSON >
 API_URL_ENTRIES=<URL to the API hosting service providing ENTRIES.JSON >
+API_KEY=<your API key (contact me if you want to use my service)>
 ```
 
 4. Start the server development by running the following command:
@@ -104,6 +105,22 @@ const userSchema = mongoose.Schema({
 });
 
 module.exports = mongoose.model("Users", userSchema);
+```
+
+## Security
+
+This API handles requests using API key in header
+
+```js
+
+app.use((req,res,next) => {
+  const providedApiKey = req.headers['x-api-key']
+  if(!providedApiKey || providedApiKey !== process.env.API_KEY){
+    return res.status(401).json({message: "Invalid API key"})
+  }
+  next();
+});
+
 ```
 
 # License
