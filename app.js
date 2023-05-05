@@ -26,6 +26,7 @@ app.use((req,res,next) => {
   if(!providedApiKey || providedApiKey !== process.env.API_KEY){
     return res.status(401).json({message: "Invalid API key"})
   }
+  next();
 });
 
 
