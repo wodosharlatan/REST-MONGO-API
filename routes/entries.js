@@ -73,7 +73,7 @@ router.post("/", async (req, res) => {
 // localhost:3000/entry/:entryId => get a specific entry
 router.get("/:Entry_ID", async (req, res) => {
 	try {
-		const entry = await Entry.findById(req.params.Entry_ID );
+		const entry = await Entry.findOne({Entry_ID: req.params.Entry_ID} );
 
 		jsonString = ValidateToJson("specific_entry", entry);
 
@@ -105,7 +105,7 @@ router.delete("/:Entry_ID", async (req, res) => {
 router.patch("/:Entry_ID", async (req, res) => {
 	try {
 		const updatedEntry = await Entry.updateOne(
-			{ req.params.Entry_ID },
+			{ Entry_ID : req.params.Entry_ID },
 			{
 				$set: {
 					ProductName: req.body.ProductName,
