@@ -9,68 +9,65 @@ require("dotenv/config");
 
 const config = {
 	headers: {
-	  'x-api-key': `${process.env.API_KEY}`
-	}
-  };
+		"x-api-key": `${process.env.API_KEY}`,
+	},
+};
 
-// localhost:3000/users => get all users
+// Get all usernames
 router.get("/", async (req, res) => {
+	usernames = [];
+
 	try {
 		const users = await User.find();
 
-		// Convert the data to JSON using the ValidateToJson function
-		jsonString = ValidateToJson("all_users", users);
+		for (let i = 0; i < users.length; i++) {
+			usernames.push({ username: users[i].Username });
+		}
 
-		res.setHeader("Content-Type", "application/json");
-		res.send(jsonString);
+		res.json(usernames);
 	} catch (error) {
 		console.log(error);
 		res.json({ message: error.toString() });
 	}
 });
 
-// localhost:3000/users => submit a user
+// Submit a user
 router.post("/", async (req, res) => {
-	// Get the current number of users
-	const currentID = await axios.get(process.env.API_URL_USERS, config);
+	axios
+		.get(process.env.API_URL_USERS, config)
+		.then((response) => {
+			for (let i = 0; i < response.data.length; i++) {
+				if (response.data[i].username == req.body.username) {
+					res.send({ message: "Username already exists" });
+					return;
+				}
+			}
 
-	const ID_List = [];
+			// Create new user
+			const user = new User({
+				Username: req.body.username,
+				Password: req.body.password,
+			});
 
-	// Get all the current user id's
-	for (let i = 0; i < currentID.data.length; i++) {
-		ID_List.push(currentID.data[i].User_ID);
-	}
-
-	// check if the new id is already in the database
-	let newID = 1;
-	while (ID_List.includes(newID.toString())) {
-		newID++;
-	}
-
-	newID = newID.toString();
-
-	const user = new User({
-		Username: req.body.Username,
-		Password: req.body.Password,
-		User_ID: newID,
-	});
-
-	try {
-		const savedUser = await user.save();
-
-		jsonString = ValidateToJson("new_user", savedUser);
-
-		res.setHeader("Content-Type", "application/json");
-		res.send(jsonString);
-	} catch (err) {
-		res.json({ message: err.toString() });
-	}
+			// Save user
+			user
+				.save()
+				.then(() => {
+					res.send({ message: "User saved successfully" });
+				})
+				.catch((err) => {
+					res.json({ message: err.toString() });
+				});
+		})
+		.catch((error) => {
+			res.json({ message: error.toString() });
+		});
 });
 
 // localhost:3000/user/:userId => get a specific user
-router.get("/:User_ID", async (req, res) => {
+router.get("/:Username", async (req, res) => {
 	try {
-		const validatedUser = await User.findOne({ User_ID: req.params.User_ID });
+		const validatedUser = await User.findOne({ Username: req.params.Username });
 
 		jsonString = ValidateToJson("specific_user", validatedUser);
 
@@ -82,9 +79,9 @@ router.get("/:User_ID", async (req, res) => {
 });
 
 // delete a specific user
-router.delete("/:User_ID", async (req, res) => {
+router.delete("/:Username", async (req, res) => {
 	try {
-		const removedUser = await User.deleteOne({ User_ID: req.params.User_ID });
+		const removedUser = await User.deleteOne({ Username: req.params.Username });
 
 		jsonString = ValidateToJson("removed_user", removedUser);
 
@@ -97,10 +94,10 @@ router.delete("/:User_ID", async (req, res) => {
 });
 
 // update a specific user
-router.patch("/:User_ID", async (req, res) => {
+router.patch("/:Username", async (req, res) => {
 	try {
 		const updatedUser = await User.updateOne(
-			{ User_ID: req.params.User_ID },
+			{ Username: req.params.Username },
 			{ $set: { Username: req.body.Username, Password: req.body.Password } }
 		);
 

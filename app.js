@@ -4,7 +4,6 @@ const app = express();
 const port = process.env.PORT || 3000;
 const mongoose = require('mongoose');
 const cors = require('cors');
-const path = require("path");
 const bodyParser = require('body-parser');
 
 // Parse JSON
@@ -39,13 +38,10 @@ app.use('/entries', entriesRoute);
 // CORS 
 app.use(cors());
 
-// Serve static files
-app.use(express.static(__dirname + "/public"));
 
 // Routes
 app.get("/*", (req, res) => {
-	const filePath = path.join(__dirname, "error_page", "index.html");
-	res.sendFile(filePath);
+	res.json({message: "Invalid URL"});
 });
 
 
