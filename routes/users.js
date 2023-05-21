@@ -2,7 +2,6 @@ const express = require("express");
 const router = express.Router();
 const User = require("../models/user_model");
 const axios = require("axios");
-const { ValidateToJson } = require("../functions/functions.js");
 
 // Import .env variables
 require("dotenv/config");
@@ -64,49 +63,13 @@ router.post("/", async (req, res) => {
 		});
 });
 
-// localhost:3000/user/:userId => get a specific user
+// Get Specific User Data by Username
 router.get("/:Username", async (req, res) => {
 	try {
 		const validatedUser = await User.findOne({ Username: req.params.Username });
 
-		jsonString = ValidateToJson("specific_user", validatedUser);
-
-		res.setHeader("Content-Type", "application/json");
-		res.send(jsonString);
+		res.json({ username: validatedUser.Username, password: validatedUser.Password });
 	} catch (error) {
-		res.json({ message: error.toString() });
-	}
-});
-
-// delete a specific user
-router.delete("/:Username", async (req, res) => {
-	try {
-		const removedUser = await User.deleteOne({ Username: req.params.Username });
-
-		jsonString = ValidateToJson("removed_user", removedUser);
-
-		res.setHeader("Content-Type", "application/json");
-		res.send(jsonString);
-	} catch (error) {
-		console.log(error);
-		res.json({ message: error.toString() });
-	}
-});
-
-// update a specific user
-router.patch("/:Username", async (req, res) => {
-	try {
-		const updatedUser = await User.updateOne(
-			{ Username: req.params.Username },
-			{ $set: { Username: req.body.Username, Password: req.body.Password } }
-		);
-
-		jsonString = ValidateToJson("updated_user", updatedUser);
-
-		res.setHeader("Content-Type", "application/json");
-		res.send(jsonString);
-	} catch (error) {
-		console.log(error);
 		res.json({ message: error.toString() });
 	}
 });
