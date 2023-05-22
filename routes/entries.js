@@ -20,13 +20,10 @@ async function GenerateID() {
 	// check if the new id is already in the database
 	let newID = 0;
 
-	console.log(ID_List);
-
 	while (ID_List.includes(newID)) {
 		newID++;
 	}
 
-	console.log(newID);
 	return newID;
 }
 
@@ -79,7 +76,6 @@ router.post("/", async (req, res) => {
 		res.json({ message: "Count must be between 1 and 100" });
 		return;
 	}
-	console.log(await GenerateID());
 
 	const entry = new Entry({
 		Entry_ID: await GenerateID(),
@@ -102,12 +98,18 @@ router.post("/", async (req, res) => {
 // Get a specific entry
 router.get("/:Entry_ID", async (req, res) => {
 	try {
-		console.log(req.params.Entry_ID);
 		const entry = await Entry.findOne({ Entry_ID: req.params.Entry_ID });
 
-		console.log(entry);
+		const result = {
+			Entry_ID: entry.Entry_ID,
+			ProductName: entry.ProductName,
+			Unit: entry.Unit,
+			Count: entry.Count,
+			AddedBy: entry.AddedBy,
+			TimeStamp: entry.TimeStamp,
+		};
 
-		res.send(entry);
+		res.send(result);
 	} catch (error) {
 		res.json({ message: error });
 	}
@@ -116,19 +118,16 @@ router.get("/:Entry_ID", async (req, res) => {
 // delete a specific entry
 router.delete("/:Entry_ID", async (req, res) => {
 	try {
-		const removedEntry = await Entry.deleteOne({
-			Entry_ID: req.params.Entry_ID,
-		});
+		await Entry.deleteOne({Entry_ID: req.params.Entry_ID,});
 
-		//jsonString = ValidateToJson("removed_entry", removedEntry);
+		res.json({ message: "Entry deleted successfully" });
 
-		res.setHeader("Content-Type", "application/json");
-		res.send(removedEntry);
 	} catch (error) {
 		console.log(error);
 		res.json({ message: error.toString() });
 	}
 });
+
 
 // update a specific entry
 router.patch("/:Entry_ID", async (req, res) => {
