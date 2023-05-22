@@ -118,21 +118,19 @@ router.get("/:Entry_ID", async (req, res) => {
 // delete a specific entry
 router.delete("/:Entry_ID", async (req, res) => {
 	try {
-		await Entry.deleteOne({Entry_ID: req.params.Entry_ID,});
+		await Entry.deleteOne({ Entry_ID: req.params.Entry_ID });
 
 		res.json({ message: "Entry deleted successfully" });
-
 	} catch (error) {
 		console.log(error);
 		res.json({ message: error.toString() });
 	}
 });
 
-
 // update a specific entry
 router.patch("/:Entry_ID", async (req, res) => {
 	try {
-		const updatedEntry = await Entry.updateOne(
+		await Entry.updateOne(
 			{ Entry_ID: req.params.Entry_ID },
 			{
 				$set: {
@@ -144,10 +142,7 @@ router.patch("/:Entry_ID", async (req, res) => {
 			}
 		);
 
-		//jsonString = ValidateToJson("updated_entry", updatedEntry);
-
-		res.setHeader("Content-Type", "application/json");
-		res.send(updatedEntry);
+		res.json({ message: "Entry updated successfully" });
 	} catch (error) {
 		console.log(error);
 		res.json({ message: error.toString() });
