@@ -43,8 +43,6 @@ npm run dev
 * `GET /users` - Get all users
 * `POST /users` - Create a new user
 * `GET /users/:userId` - Get a specific user
-* `PATCH /users/:userId` - Update a specific user
-* `DELETE /users/:userId` - Delete a specific user
 
 ## Model Schemas
 
@@ -55,8 +53,8 @@ const { GetCurrentDate } = require("../functions/functions.js");
 
 
 const entrySchema = mongoose.Schema({
-	Entry_ID: { // <-- This is Auto Incremented (Routes -> entries.js -> entry.post => add new entry )
-		type: String,
+	Entry_ID: {
+		type: Number,
 		required: true,
 	},
 	ProductName: {
@@ -68,7 +66,7 @@ const entrySchema = mongoose.Schema({
 		required: true,
 	},
 	Count: {
-		type: String,
+		type: Number,
 		required: true,
 	},
 	AddedBy: {
@@ -77,7 +75,7 @@ const entrySchema = mongoose.Schema({
 	},
 	TimeStamp: {
 		type: String,
-		default: GetCurrentDate(), // <-- Always returns Current Date in DD.MM.YYYY format
+		default: GetCurrentDate(),
 	},
 });
 
@@ -97,11 +95,7 @@ const userSchema = mongoose.Schema({
 	Password: {
 		type: String,
 		required: true,
-	},
-	User_ID: { // <-- This is Auto Incremented (Routes -> users.js -> router.post => submit a user )
-		type: String,
-		required: true,
-	},
+	}
 });
 
 module.exports = mongoose.model("Users", userSchema);
