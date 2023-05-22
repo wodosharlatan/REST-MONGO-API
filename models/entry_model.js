@@ -4,7 +4,7 @@ const { GetCurrentDate } = require("../functions/functions.js");
 
 const entrySchema = mongoose.Schema({
 	Entry_ID: {
-		type: String,
+		type: Number,
 		required: true,
 	},
 	ProductName: {
@@ -16,7 +16,7 @@ const entrySchema = mongoose.Schema({
 		required: true,
 	},
 	Count: {
-		type: String,
+		type: Number,
 		required: true,
 	},
 	AddedBy: {

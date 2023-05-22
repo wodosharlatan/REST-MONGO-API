@@ -2,36 +2,12 @@ const express = require("express");
 const router = express.Router();
 const Entry = require("../models/entry_model");
 const axios = require("axios");
-const { ValidateToJson } = require("../functions/functions.js");
 
 // Import .env variables
 require("dotenv/config");
 
-const config = {
-  headers: {
-    'x-api-key': `${process.env.API_KEY}`
-  }
-};
-
-// localhost:3000/entries => get all entries
-router.get("/", async (req, res) => {
-	try {
-		const entries = await Entry.find();
-
-		// Convert the data to JSON using the ValidateToJson function
-		jsonString = ValidateToJson("all_entries", entries);
-
-		// Send JSON
-		res.setHeader("Content-Type", "application/json");
-		res.send(jsonString);
-	} catch (error) {
-		res.json({ message: error.toString() });
-	}
-});
-
-// localhost:3000/entries => submit a entry
-router.post("/", async (req, res) => {
-	// Get the current number of entries
+async function GenerateID() {
+	// Get all entries
 	const currentID = await axios.get(process.env.API_URL_ENTRIES, config);
 
 	const ID_List = [];
@@ -42,43 +18,96 @@ router.post("/", async (req, res) => {
 	}
 
 	// check if the new id is already in the database
-	let newID = 1;
-	while (ID_List.includes(newID.toString())) {
+	let newID = 0;
+
+	console.log(ID_List);
+
+	while (ID_List.includes(newID)) {
 		newID++;
 	}
 
-	newID = newID.toString();
+	console.log(newID);
+	return newID;
+}
+
+const config = {
+	headers: {
+		"x-api-key": `${process.env.API_KEY}`,
+	},
+};
+
+// Get all entries
+router.get("/", async (req, res) => {
+	try {
+		const entries = await Entry.find();
+
+		const result = entries.map((entry) => {
+			return {
+				Entry_ID: entry.Entry_ID,
+				ProductName: entry.ProductName,
+				Unit: entry.Unit,
+				Count: entry.Count,
+				AddedBy: entry.AddedBy,
+				TimeStamp: entry.TimeStamp,
+			};
+		});
+
+		res.json(result);
+	} catch (error) {
+		res.json({ message: error.toString() });
+	}
+});
+
+// Submit New Entry
+router.post("/", async (req, res) => {
+	const productname = req.body.ProductName.trim();
+	const unit = req.body.Unit.trim();
+	const count = req.body.Count;
+	const addedby = req.body.AddedBy.trim();
+
+	if (productname.length < 2 || productname.length > 50) {
+		res.json({ message: "Product name must be between 2 and 50 characters" });
+		return;
+	}
+
+	if (unit.length < 2 || unit.length > 20) {
+		res.json({ message: "Unit must be between 2 and 20 characters" });
+		return;
+	}
+
+	if (count < 1 || count > 100) {
+		res.json({ message: "Count must be between 1 and 100" });
+		return;
+	}
+	console.log(await GenerateID());
 
 	const entry = new Entry({
-		Entry_ID: newID,
-		ProductName: req.body.ProductName,
-		Unit: req.body.Unit,
-		Count: req.body.Count,
-		AddedBy: req.body.AddedBy,
+		Entry_ID: await GenerateID(),
+		ProductName: productname,
+		Unit: unit,
+		Count: count,
+		AddedBy: addedby,
 	});
 
 	try {
-		const savedEntry = await entry.save();
+		await entry.save();
 
-		jsonString = ValidateToJson("new_entry", savedEntry);
-
-		res.setHeader("Content-Type", "application/json");
-		res.send(jsonString);
+		res.json({ message: "Entry saved successfully" });
 	} catch (err) {
 		console.log(err);
 		res.json({ message: err.toString() });
 	}
 });
 
-// localhost:3000/entry/:entryId => get a specific entry
+// Get a specific entry
 router.get("/:Entry_ID", async (req, res) => {
 	try {
-		const entry = await Entry.findOne({Entry_ID: req.params.Entry_ID} );
+		console.log(req.params.Entry_ID);
+		const entry = await Entry.findOne({ Entry_ID: req.params.Entry_ID });
 
-		jsonString = ValidateToJson("specific_entry", entry);
+		console.log(entry);
 
-		res.setHeader("Content-Type", "application/json");
-		res.send(jsonString);
+		res.send(entry);
 	} catch (error) {
 		res.json({ message: error });
 	}
@@ -91,10 +120,10 @@ router.delete("/:Entry_ID", async (req, res) => {
 			Entry_ID: req.params.Entry_ID,
 		});
 
-		jsonString = ValidateToJson("removed_entry", removedEntry);
+		//jsonString = ValidateToJson("removed_entry", removedEntry);
 
 		res.setHeader("Content-Type", "application/json");
-		res.send(jsonString);
+		res.send(removedEntry);
 	} catch (error) {
 		console.log(error);
 		res.json({ message: error.toString() });
@@ -105,7 +134,7 @@ router.delete("/:Entry_ID", async (req, res) => {
 router.patch("/:Entry_ID", async (req, res) => {
 	try {
 		const updatedEntry = await Entry.updateOne(
-			{ Entry_ID : req.params.Entry_ID },
+			{ Entry_ID: req.params.Entry_ID },
 			{
 				$set: {
 					ProductName: req.body.ProductName,
@@ -116,10 +145,10 @@ router.patch("/:Entry_ID", async (req, res) => {
 			}
 		);
 
-		jsonString = ValidateToJson("updated_entry", updatedEntry);
+		//jsonString = ValidateToJson("updated_entry", updatedEntry);
 
 		res.setHeader("Content-Type", "application/json");
-		res.send(jsonString);
+		res.send(updatedEntry);
 	} catch (error) {
 		console.log(error);
 		res.json({ message: error.toString() });

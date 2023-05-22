@@ -32,11 +32,16 @@ router.get("/", async (req, res) => {
 
 // Submit a user
 router.post("/", async (req, res) => {
+
+	const username = req.body.username.trim();
+	const password = req.body.password.trim();
+
+
 	axios
 		.get(process.env.API_URL_USERS, config)
 		.then((response) => {
 			for (let i = 0; i < response.data.length; i++) {
-				if (response.data[i].username == req.body.username) {
+				if (response.data[i].username == username) {
 					res.send({ message: "Username already exists" });
 					return;
 				}
@@ -44,8 +49,8 @@ router.post("/", async (req, res) => {
 
 			// Create new user
 			const user = new User({
-				Username: req.body.username,
-				Password: req.body.password,
+				Username: username,
+				Password: password,
 			});
 
 			// Save user
