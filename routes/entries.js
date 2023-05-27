@@ -2,30 +2,19 @@ const express = require("express");
 const router = express.Router();
 const Entry = require("../models/entry_model");
 const User = require("../models/user_model");
+const { AuthenticateUser, generateID } = require("../functions/functions.js");
 
 // Import .env variables
 require("dotenv/config");
 
-async function generateID() {
-	let newID = 0;
-
-	const entries = await Entry.find();
-
-	// get all the ids
-	const result = entries.map((entry) => {
-		return entry.ID;
-	});
-
-	// check if the new id is already in the database
-	while (result.includes(newID)) {
-		newID++;
-	}
-
-	return newID;
-}
-
 // Get all entries
 router.post("/", async (req, res) => {
+	// Check if user is authenticated
+	if ((await AuthenticateUser(req.body.token)) === false) {
+		res.json({ message: "Unauthorized" });
+		return;
+	}
+
 	try {
 		const entries = await Entry.find();
 
@@ -48,6 +37,12 @@ router.post("/", async (req, res) => {
 
 // Submit New Entry
 router.post("/", async (req, res) => {
+	// Check if user is authenticated
+	if ((await AuthenticateUser(req.body.token)) === false) {
+		res.json({ message: "Unauthorized" });
+		return;
+	}
+
 	const ProductName = req.body.productName.trim();
 	const Unit = req.body.unit.trim();
 	const Count = req.body.count;
@@ -99,6 +94,12 @@ router.post("/", async (req, res) => {
 
 // Get a specific entry
 router.get("/:Entry_ID", async (req, res) => {
+	// Check if user is authenticated
+	if ((await AuthenticateUser(req.body.token)) === false) {
+		res.json({ message: "Unauthorized" });
+		return;
+	}
+
 	try {
 		const entry = await Entry.findOne({ Entry_ID: req.params.Entry_ID });
 
@@ -119,6 +120,12 @@ router.get("/:Entry_ID", async (req, res) => {
 
 // delete a specific entry
 router.delete("/:Entry_ID", async (req, res) => {
+	// Check if user is authenticated
+	if ((await AuthenticateUser(req.body.token)) === false) {
+		res.json({ message: "Unauthorized" });
+		return;
+	}
+
 	try {
 		await Entry.deleteOne({ Entry_ID: req.params.Entry_ID });
 
@@ -130,6 +137,12 @@ router.delete("/:Entry_ID", async (req, res) => {
 
 // update a specific entry
 router.patch("/:Entry_ID", async (req, res) => {
+	// Check if user is authenticated
+	if ((await AuthenticateUser(req.body.token)) === false) {
+		res.json({ message: "Unauthorized" });
+		return;
+	}
+
 	try {
 		await Entry.updateOne(
 			{ Entry_ID: req.params.Entry_ID },
