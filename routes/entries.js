@@ -1,40 +1,31 @@
 const express = require("express");
 const router = express.Router();
 const Entry = require("../models/entry_model");
-const axios = require("axios");
+const User = require("../models/user_model");
 
 // Import .env variables
 require("dotenv/config");
 
-async function GenerateID() {
-	// Get all entries
-	const currentID = await axios.get(process.env.API_URL_ENTRIES, config);
-
-	const ID_List = [];
-
-	// Get all the current entries id's
-	for (let i = 0; i < currentID.data.length; i++) {
-		ID_List.push(currentID.data[i].Entry_ID);
-	}
-
-	// check if the new id is already in the database
+async function generateID() {
 	let newID = 0;
 
-	while (ID_List.includes(newID)) {
+	const entries = await Entry.find();
+
+	// get all the ids
+	const result = entries.map((entry) => {
+		return entry.ID;
+	});
+
+	// check if the new id is already in the database
+	while (result.includes(newID)) {
 		newID++;
 	}
 
 	return newID;
 }
 
-const config = {
-	headers: {
-		"x-api-key": `${process.env.API_KEY}`,
-	},
-};
-
 // Get all entries
-router.get("/", async (req, res) => {
+router.post("/", async (req, res) => {
 	try {
 		const entries = await Entry.find();
 
@@ -57,28 +48,39 @@ router.get("/", async (req, res) => {
 
 // Submit New Entry
 router.post("/", async (req, res) => {
-	const productname = req.body.ProductName.trim();
-	const unit = req.body.Unit.trim();
-	const count = req.body.Count;
-	const addedby = req.body.AddedBy.trim();
+	const ProductName = req.body.productName.trim();
+	const Unit = req.body.unit.trim();
+	const Count = req.body.count;
+	const AddedBy = req.body.addedby.trim();
 
-	if (productname.length < 2 || productname.length > 50) {
+	// Check if user exists
+	const users = await User.findOne({ Username: AddedBy });
+
+	if (!users) {
+		res.json({ message: "User does not exist" });
+		return;
+	}
+
+	// Check if product name, unit and count are valid
+	if (ProductName.length < 2 || ProductName.length > 50) {
 		res.json({ message: "Product name must be between 2 and 50 characters" });
 		return;
 	}
 
-	if (unit.length < 2 || unit.length > 20) {
+	// Check if product name, unit and count are valid
+	if (Unit.length < 2 || Unit.length > 20) {
 		res.json({ message: "Unit must be between 2 and 20 characters" });
 		return;
 	}
 
-	if (count < 1 || count > 100) {
+	// Check if product name, unit and count are valid
+	if (Count < 1 || Count > 100) {
 		res.json({ message: "Count must be between 1 and 100" });
 		return;
 	}
 
 	const entry = new Entry({
-		Entry_ID: await GenerateID(),
+		Entry_ID: await generateID(),
 		ProductName: productname,
 		Unit: unit,
 		Count: count,
@@ -109,7 +111,7 @@ router.get("/:Entry_ID", async (req, res) => {
 			TimeStamp: entry.TimeStamp,
 		};
 
-		res.send(result);
+		res.json(result);
 	} catch (error) {
 		res.json({ message: error });
 	}
@@ -122,7 +124,6 @@ router.delete("/:Entry_ID", async (req, res) => {
 
 		res.json({ message: "Entry deleted successfully" });
 	} catch (error) {
-		console.log(error);
 		res.json({ message: error.toString() });
 	}
 });
@@ -144,7 +145,6 @@ router.patch("/:Entry_ID", async (req, res) => {
 
 		res.json({ message: "Entry updated successfully" });
 	} catch (error) {
-		console.log(error);
 		res.json({ message: error.toString() });
 	}
 });
