@@ -13,8 +13,9 @@ const bodyParser = require("body-parser");
 app.use(bodyParser.json());
 
 // Import Routes
-const usersRoute = require("./routes/users");
+const usersRoute = require("./routes/new-user");
 const entriesRoute = require("./routes/entries");
+const loginRoute = require("./routes/login.js");
 
 // verify API KEY
 app.use((req, res, next) => {
@@ -26,7 +27,8 @@ app.use((req, res, next) => {
 });
 
 // Middleware
-app.use("/users", usersRoute);
+app.use("/new-user", usersRoute);
+app.use("/login", loginRoute);
 app.use("/entries", entriesRoute);
 
 
