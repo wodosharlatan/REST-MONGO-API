@@ -18,8 +18,6 @@ npm install
 ```env
 DB_CONNECTION=<your MongoDB connection string>
 PORT=<port number for the server>
-API_URL_USERS=<URL to the API hosting service providing USERS.JSON >
-API_URL_ENTRIES=<URL to the API hosting service providing ENTRIES.JSON >
 API_KEY=<your API key (contact me if you want to use my service)>
 ```
 
