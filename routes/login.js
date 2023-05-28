@@ -11,7 +11,8 @@ require("dotenv/config");
 // Submit a user
 router.post("/", async (req, res) => {
 	try {
-		const username = req.body.username.trim();
+		const username = req.body.username;
+		username.trim();
 
 		// Check if username already exists
 		const users = await User.findOne({ Username: username });
@@ -21,10 +22,11 @@ router.post("/", async (req, res) => {
 			return;
 		}
 
-		const password = saltedSha256(`${req.body.password.trim()}`, "SALT");
+		const password = req.body.password;
+		const hashedPassword = saltedSha256(`${password.trim()}`, "SALT");
 
 		// Check if password is correct
-		if (users.Password !== password) {
+		if (users.Password !== hashedPassword) {
 			res.json({ message: "Incorrect password" });
 			return;
 		}
