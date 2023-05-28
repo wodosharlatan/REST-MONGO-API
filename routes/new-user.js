@@ -11,7 +11,8 @@ require("dotenv/config");
 // Submit a user
 router.post("/", async (req, res) => {
 	try {
-		const username = req.body.username.trim();
+		const username = req.body.username
+		username.trim();
 
 		// Check if username already exists
 		const users = await User.findOne({ Username: username });
@@ -21,7 +22,8 @@ router.post("/", async (req, res) => {
 			return;
 		}
 
-		const password = saltedSha256(`${req.body.password.trim()}`, "SALT");
+		const password = req.body.password
+		const hashedPassword = saltedSha256(`${password.trim()}`, "SALT");
 
 		// Generate UID
 		const randomToken = await uidgen.generate();
@@ -29,7 +31,7 @@ router.post("/", async (req, res) => {
 		// Create new user
 		const user = new User({
 			Username: username,
-			Password: password,
+			Password: hashedPassword,
 			UserToken: randomToken,
 		});
 
