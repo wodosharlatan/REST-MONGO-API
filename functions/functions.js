@@ -1,3 +1,5 @@
+const User = require("../models/user_model");
+
 // Get the current date in YYYYMMDD format
 Date.prototype.yyyymmdd = function () {
 	let mm = this.getMonth() + 1; // getMonth() is zero-based
@@ -18,11 +20,12 @@ function ValidateDate() {
 async function GetNewID() {
 	let newID = 0;
 
+	const Entry = require("../models/entry_model");
 	const entries = await Entry.find();
 
 	// get all the id's
 	const result = entries.map((entry) => {
-		return entry.ID;
+		return entry.Entry_ID;
 	});
 
 	// check if the new id is already in the database
@@ -43,7 +46,7 @@ async function Authenticate(token) {
 }
 
 module.exports = {
-    GetCurrentDate : ValidateDate,
-	generateID : GetNewID,
-	AuthenticateUser : Authenticate
-}
+	GetCurrentDate: ValidateDate,
+	generateID: GetNewID,
+	AuthenticateUser: Authenticate,
+};

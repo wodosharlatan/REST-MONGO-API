@@ -16,6 +16,7 @@ app.use(bodyParser.json());
 const usersRoute = require("./routes/new-user");
 const entriesRoute = require("./routes/entries");
 const loginRoute = require("./routes/login.js");
+const newEntryRoute = require("./routes/new-entry.js");
 
 // verify API KEY
 app.use((req, res, next) => {
@@ -30,6 +31,7 @@ app.use((req, res, next) => {
 app.use("/new-user", usersRoute);
 app.use("/login", loginRoute);
 app.use("/entries", entriesRoute);
+app.use("/new-entry", newEntryRoute);
 
 
 // Routes
