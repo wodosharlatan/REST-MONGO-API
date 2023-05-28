@@ -32,17 +32,15 @@ npm run dev
 
 1. Shopping Items
 
-* `GET /entries` - Get all shopping items
-* `POST /entries` - Create a new shopping item
-* `GET /entries/:entryId` - Get a specific shopping item
-* `PATCH /entries/:entryId` - Update a specific shopping item
-* `DELETE /entries/:entryId` - Delete a specific shopping item
+* `POST /new-entry` - Create a new shopping item
+* `POST /entries/:Entry_ID` - Get a specific shopping item
+* `PATCH /entries/:Entry_ID` - Update a specific shopping item
+* `DELETE /entries/:Entry_ID` - Delete a specific shopping item
 
 2. Users
 
-* `GET /users` - Get all users
-* `POST /users` - Create a new user
-* `GET /users/:userId` - Get a specific user
+* `POST /new-user` - Create a new user
+* `POST /login` - Logs user in and generates token for him
 
 ## Model Schemas
 
@@ -95,10 +93,15 @@ const userSchema = mongoose.Schema({
 	Password: {
 		type: String,
 		required: true,
+	},
+	UserToken:{
+		type: String,
+		required: true,
 	}
 });
 
 module.exports = mongoose.model("Users", userSchema);
+
 ```
 
 ## Security
@@ -118,4 +121,4 @@ app.use((req,res,next) => {
 ```
 
 # License
-This project is licensed under the MIT License - see the <a href="https://github.com/wodosharlatan/REST-API-DB/blob/main/LICENSE">LICENSE</a> file for details.
+This project is licensed under the MIT License - see the <a href="https://github.com/wodosharlatan/REST-MONGO-API/blob/main/LICENSE">LICENSE</a> file for details.
