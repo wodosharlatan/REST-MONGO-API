@@ -44,7 +44,10 @@ router.post("/", async (req, res) => {
 			}
 		);
 
-		res.json({ message: "Successfully logged in" });
+		const updatedUser = await User.findOne({ Username: username });
+
+		res.send(updatedUser.UserToken);
+
 		return;
 	} catch (error) {
 		console.log(error);
