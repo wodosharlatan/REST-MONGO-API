@@ -34,8 +34,6 @@ router.post("/", async (req, res) => {
 	}
 });
 
-
-
 // Get a specific entry
 router.post("/:Entry_ID", async (req, res) => {
 	// Check if user is authenticated
@@ -62,23 +60,6 @@ router.post("/:Entry_ID", async (req, res) => {
 	}
 });
 
-// delete a specific entry
-router.delete("/:Entry_ID", async (req, res) => {
-	// Check if user is authenticated
-	if ((await AuthenticateUser(req.body.token)) === false) {
-		res.json({ message: "Unauthorized" });
-		return;
-	}
-
-	try {
-		await Entry.deleteOne({ Entry_ID: req.params.Entry_ID });
-
-		res.json({ message: "Entry deleted successfully" });
-	} catch (error) {
-		res.json({ message: error.toString() });
-	}
-});
-
 // update a specific entry
 router.patch("/:Entry_ID", async (req, res) => {
 	// Check if user is authenticated
@@ -95,7 +76,6 @@ router.patch("/:Entry_ID", async (req, res) => {
 					ProductName: req.body.ProductName,
 					Unit: req.body.Unit,
 					Count: req.body.Count,
-					AddedBy: req.body.AddedBy,
 				},
 			}
 		);
