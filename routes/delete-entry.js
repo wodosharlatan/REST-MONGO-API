@@ -8,7 +8,7 @@ require("dotenv/config");
 
 
 // delete a specific entry
-router.delete("/:Entry_ID", async (req, res) => {
+router.post("/:Entry_ID", async (req, res) => {
 	// Check if user is authenticated
 	if ((await AuthenticateUser(req.body.token)) === false) {
 		res.json({ message: "Unauthorized" });
