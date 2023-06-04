@@ -68,24 +68,29 @@ router.patch("/:Entry_ID", async (req, res) => {
 		return;
 	}
 
-	const ProductName = req.body.productName;
-	const Unit = req.body.unit;
-	const Count = req.body.count;
+	const ValidProductName = req.body.productName;
+	ValidProductName.trim();
+
+	const ValidUnit = req.body.unit;
+	ValidUnit.trim();
+
+	const ValidCount = req.body.count;
+
 
 	// Check if product name, unit and count are valid
-	if (ProductName.length < 2 || ProductName.length > 50) {
+	if (ValidProductName.length < 2 || ValidProductName.length > 50) {
 		res.json({ message: "Product name must be between 2 and 50 characters" });
 		return;
 	}
 
 	// Check if product name, unit and count are valid
-	if (Unit.length < 2 || Unit.length > 20) {
+	if (ValidUnit.length < 2 || ValidUnit.length > 20) {
 		res.json({ message: "Unit must be between 2 and 20 characters" });
 		return;
 	}
 
 	// Check if product name, unit and count are valid
-	if (Count < 1 || Count > 100) {
+	if (ValidCount < 1 || ValidCount > 100) {
 		res.json({ message: "Count must be between 1 and 100" });
 		return;
 	}
@@ -95,9 +100,9 @@ router.patch("/:Entry_ID", async (req, res) => {
 			{ Entry_ID: req.params.Entry_ID },
 			{
 				$set: {
-					ProductName: ProductName,
-					Unit: Unit,
-					Count: Count,
+					ProductName: ValidProductName,
+					Unit: ValidUnit,
+					Count: ValidCount,
 				},
 			}
 		);
